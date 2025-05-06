@@ -19,7 +19,7 @@ import type { DatabaseServer } from "@spt/servers/DatabaseServer";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
 import type { LocaleService } from "@spt/services/LocaleService";
 import type { QuestHelper } from "@spt/helpers/QuestHelper";
-import type { VFS } from "@spt/utils/VFS";
+import type { fs } from fs;
 import type { HttpResponseUtil } from "@spt/utils/HttpResponseUtil";
 import type { RandomUtil } from "@spt/utils/RandomUtil";
 import type { BotController } from "@spt/controllers/BotController";
@@ -47,7 +47,7 @@ class QuestingBots implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     private databaseTables: IDatabaseTables;
     private localeService: LocaleService;
     private questHelper: QuestHelper;
-    private vfs: VFS;
+    private fs: fs;
     private httpResponseUtil: HttpResponseUtil;
     private randomUtil: RandomUtil;
     private botController: BotController;
@@ -185,7 +185,7 @@ class QuestingBots implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         this.databaseServer = container.resolve<DatabaseServer>("DatabaseServer");
         this.localeService = container.resolve<LocaleService>("LocaleService");
         this.questHelper = container.resolve<QuestHelper>("QuestHelper");
-        this.vfs = container.resolve<VFS>("VFS");
+        this.fs = require<fs>("fs");
         this.httpResponseUtil = container.resolve<HttpResponseUtil>("HttpResponseUtil");
         this.randomUtil = container.resolve<RandomUtil>("RandomUtil");
         this.botController = container.resolve<BotController>("BotController");
@@ -310,17 +310,17 @@ class QuestingBots implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     {
         const path = `${__dirname}/..`;
 
-        if (this.vfs.exists(`${path}/quests/`))
+        if (this.fs.existsSync(`${path}/quests/`))
         {
             this.commonUtils.logWarning("Found obsolete quests folder 'user\\mods\\DanW-SPTQuestingBots\\quests'. Only quest files in 'BepInEx\\plugins\\DanW-SPTQuestingBots\\quests' will be used.");
         }
 
-        if (this.vfs.exists(`${path}/log/`))
+        if (this.fs.existsSync(`${path}/log/`))
         {
             this.commonUtils.logWarning("Found obsolete log folder 'user\\mods\\DanW-SPTQuestingBots\\log'. Logs are now saved in 'BepInEx\\plugins\\DanW-SPTQuestingBots\\log'.");
         }
 
-        if (this.vfs.exists(`${path}/../../../BepInEx/plugins/SPTQuestingBots.dll`))
+        if (this.fs.existsSync(`${path}/../../../BepInEx/plugins/SPTQuestingBots.dll`))
         {
             this.commonUtils.logError("Please remove BepInEx/plugins/SPTQuestingBots.dll from the previous version of this mod and restart the server, or it will NOT work correctly.");
         
